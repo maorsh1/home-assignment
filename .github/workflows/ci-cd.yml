@@ -81,4 +81,5 @@ jobs:
           fi
 
       - name: Print Version
-        run: echo "Build version was: ${{ needs.build.outputs.version }}"
+        run: echo "Build version was: $VERSION"
+
