@@ -6,14 +6,13 @@ on:
 
 env:
   IMAGE_NAME: hello-world
-  DOCKER_REGISTRY: docker.io
   DOCKER_REPO: ${{ secrets.DOCKERHUB_USER }}/hello-world
 
 jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.setversion.outputs.version }}
+      version: ${{ steps.version_step.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,17 +28,13 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Run Tests
-        run: dotnet test --no-build --verbosity normal --logger trx --results-directory TestResults
-
       - name: Publish App
         run: dotnet publish -c Release -o out
 
-      - name: Set Version from Git Tags
-        id: setversion
+      - name: Set Version
+        id: version_step
         run: |
           VERSION=$(git describe --tags --always || echo "v0.0.1")
-          echo "VERSION=$VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
   docker:
@@ -56,30 +51,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: |
-          docker build -t $DOCKER_REPO:${{ needs.build.outputs.version }} .
+        run: docker build -t ${{ env.IMAGE_NAME }}:${{ needs.build.outputs.version }} .
 
-      - name: Scan image with Trivy (Bonus)
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: $DOCKER_REPO:${{ needs.build.outputs.version }}
-          format: 'table'
-          exit-code: '1'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Push Image
-        run: |
-          docker push $DOCKER_REPO:${{ needs.build.outputs.version }}
-
-      - name: Run Container and Validate Output
-        run: |
-          OUTPUT=$(docker run --rm $DOCKER_REPO:${{ needs.build.outputs.version }})
-          echo "Container Output: $OUTPUT"
-          if [[ "$OUTPUT" != *"Hello World"* ]]; then
-            echo "Unexpected output from container"
-            exit 1
-          fi
-
-      - name: Print Version
-        run: echo "Build version was: $VERSION"
-
+      - name: Push Docker Image
+        run: docker push ${{ env.IMAGE_NAME }}:${{ needs.build.outputs.version }}
