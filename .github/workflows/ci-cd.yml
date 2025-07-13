@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set-version.outputs.VERSION }}
+      version: ${{ steps.set-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,8 +39,8 @@ jobs:
         id: set-version
         run: |
           VERSION=$(git describe --tags --always || echo "v0.0.1")
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Git Version: ${VERSION}"
+          echo "VERSION=$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
   docker:
     needs: build
