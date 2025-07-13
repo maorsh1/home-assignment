@@ -5,8 +5,7 @@ on:
     branches: [master]
 
 env:
-  IMAGE_NAME: hello-world
-  DOCKER_REPO: ${{ secrets.DOCKERHUB_USER }}/hello-world
+  IMAGE_NAME: maorsh6/hello-world
 
 jobs:
   build:
