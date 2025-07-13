@@ -37,3 +37,6 @@ DOCKERHUB_TOKEN: Docker Hub password or token
 
 Created by Maor Sh
 Contact me for questions or collaboration.
+
+
+status badge: [![CI/CD Pipeline](https://github.com/maorsh1/home-assignment/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/maorsh1/home-assignment/actions/workflows/ci-cd.yml)
