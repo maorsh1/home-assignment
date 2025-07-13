@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set-version.outputs.version }}
+      version: ${{ steps.setversion.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
         run: dotnet publish -c Release -o out
 
       - name: Set Version from Git Tags
-        id: set-version
+        id: setversion
         run: |
           VERSION=$(git describe --tags --always || echo "v0.0.1")
           echo "VERSION=$VERSION"
